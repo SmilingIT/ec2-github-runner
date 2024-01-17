@@ -6,6 +6,7 @@ class Config {
     this.input = {
       mode: core.getInput('mode'),
       githubToken: core.getInput('github-token'),
+      githubRegistrationToken: core.getInput('github-registration-token'),
       ec2ImageId: core.getInput('ec2-image-id'),
       ec2InstanceType: core.getInput('ec2-instance-type'),
       subnetId: core.getInput('subnet-id'),
@@ -41,8 +42,8 @@ class Config {
       throw new Error(`The 'mode' input is not specified`);
     }
 
-    if (!this.input.githubToken) {
-      throw new Error(`The 'github-token' input is not specified`);
+    if (!this.input.githubToken && !this.input.githubRegistrationToken) {
+      throw new Error(`The 'github-token' xor 'github-registration-token' inputs must be specified`);
     }
 
     if (this.input.mode === 'start') {
