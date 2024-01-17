@@ -42,11 +42,10 @@ class Config {
       throw new Error(`The 'mode' input is not specified`);
     }
 
-    if (!this.input.githubToken && !this.input.githubRegistrationToken) {
-      throw new Error(`The 'github-token' xor 'github-registration-token' inputs must be specified`);
-    }
-
     if (this.input.mode === 'start') {
+      if (!this.input.githubToken && !this.input.githubRegistrationToken) {
+        throw new Error(`The 'github-token' xor 'github-registration-token' inputs must be specified`);
+      }
       if (!this.input.ec2ImageId || !this.input.ec2InstanceType || !this.input.ec2Os || !this.input.subnetId || !this.input.securityGroupId) {
         throw new Error(`Not all the required inputs are provided for the 'start' mode`);
       }
