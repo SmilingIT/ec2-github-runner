@@ -19,6 +19,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
         'echo "${config.input.preRunnerScript}" > pre-runner-script.ps1',
         '& pre-runner-script.bat',
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         './run.cmd',
         '</powershell>',
         '<persist>false</persist>',
@@ -32,6 +33,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
         `Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v${runnerVersion}/actions-runner-win-x64-${runnerVersion}.zip -OutFile actions-runner-win-x64-${runnerVersion}.zip`,
         `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         './run.cmd',
         '</powershell>',
         '<persist>false</persist>',
@@ -84,6 +86,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
+    InstanceInitiatedShutdownBehavior: 'terminate',   // force EC2 instance to terminate when shutdown
   };
 
   const command = new RunInstancesCommand(params);
