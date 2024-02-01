@@ -15,11 +15,11 @@ function buildUserDataScript(githubRegistrationToken, label) {
       // to be pre-installed in the AMI, so we simply cd into that directory and then start the runner
       return [
         '<powershell>',
-        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         'cd "${config.input.runnerHomeDir}"',
         'echo "${config.input.preRunnerScript}" > pre-runner-script.ps1',
         '& pre-runner-script.bat',
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         './run.cmd',
         '</powershell>',
         '<persist>false</persist>',
@@ -27,13 +27,13 @@ function buildUserDataScript(githubRegistrationToken, label) {
     } else {
       return [
         '<powershell>',
-        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         'mkdir actions-runner; cd actions-runner',
         'echo "${config.input.preRunnerScript}" > pre-runner-script.ps1',
         '& pre-runner-script.ps1',
         `Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v${runnerVersion}/actions-runner-win-x64-${runnerVersion}.zip -OutFile actions-runner-win-x64-${runnerVersion}.zip`,
         `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         './run.cmd',
         '</powershell>',
         '<persist>false</persist>',
