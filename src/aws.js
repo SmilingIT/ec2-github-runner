@@ -20,6 +20,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
         '& pre-runner-script.bat',
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
         './run.cmd',
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         '</powershell>',
         '<persist>false</persist>',
       ]
@@ -33,6 +34,7 @@ function buildUserDataScript(githubRegistrationToken, label) {
         `Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runnerVersion}.zip", "$PWD")`,
         `./config.cmd --url https://github.com/${config.githubContext.owner}/${config.githubContext.repo} --token ${githubRegistrationToken} --labels ${label} --name ${label} --unattended --ephemeral`,
         './run.cmd',
+        `shutdown -s -t ${config.input.autoShutdownSeconds}`,
         '</powershell>',
         '<persist>false</persist>',
       ]

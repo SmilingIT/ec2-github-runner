@@ -225,6 +225,7 @@ Now you're ready to go!
 | `runner-home-dir`                                                                                                                                                              | Optional. Used only with the `start` mode. | Specifies a directory where pre-installed actions-runner software and scripts are located.<br><br> |
 | `aws-key-pair-name`                                                                                                                                                          | Optional. Used only with the `start` mode. | Specifies a key pair to add to the instance when launching it                                                                                                                                                                                                                                                                         |
 | `pre-runner-script`                                                                                                                                                              | Optional. Used only with the `start` mode. | Specifies bash commands to run before the runner starts.  It's useful for installing dependencies with apt-get, yum, dnf, etc. For example:<pre>          - name: Start EC2 runner<br>            with:<br>              mode: start<br>              ...<br>              pre-runner-script: \|<br>                 sudo yum update -y && \ <br>                 sudo yum install docker git libicu -y<br>                 sudo systemctl enable docker</pre>
+| `auto-shutdown-seconds`                                                                                                                                                          | Optional. If set, schedule an auto-shutdown after X seconds. On Windows only | Specifies the number of seconds                                                                                                                                                                                                                                                                         |
 <br><br> |
 
 ### Environment variables
@@ -284,6 +285,7 @@ jobs:
               {"Key": "Name", "Value": "ec2-github-runner"},
               {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
             ]
+          auto-shutdown-seconds: 3600 # optional
   do-the-job:
     name: Do the job on the runner
     needs: start-runner # required to start the main job when the runner is ready

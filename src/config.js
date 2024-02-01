@@ -18,6 +18,7 @@ class Config {
       runnerHomeDir: core.getInput('runner-home-dir'),
       awsKeyPairName: core.getInput('aws-key-pair-name'),
       preRunnerScript: core.getInput('pre-runner-script'),
+      autoShutdownSeconds: core.getInput('auto-shutdown-seconds'),
     };
 
     const tags = JSON.parse(core.getInput('aws-resource-tags'));
@@ -51,6 +52,9 @@ class Config {
       }
       if (this.input.ec2Os !== 'windows' && this.input.ec2Os !== 'linux') {
         throw new Error(`Wrong ec2-os. Allowed values: windows or linux.`);
+      }
+      if (!Number.isInteger(parseInt(this.input.autoShutdownSeconds)) ) {
+        throw new Error(`Wrong auto-shutdown-seconds. Allowed values: integer.`);
       }
     } else if (this.input.mode === 'stop') {
       if (!this.input.label || !this.input.ec2InstanceId) {
