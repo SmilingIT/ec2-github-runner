@@ -6,6 +6,7 @@ class Config {
     this.input = {
       mode: core.getInput('mode'),
       githubToken: core.getInput('github-token'),
+      githubRegistrationToken: core.getInput('github-registration-token'),
       ec2ImageId: core.getInput('ec2-image-id'),
       ec2InstanceType: core.getInput('ec2-instance-type'),
       subnetId: core.getInput('subnet-id'),
@@ -17,6 +18,7 @@ class Config {
       runnerHomeDir: core.getInput('runner-home-dir'),
       awsKeyPairName: core.getInput('aws-key-pair-name'),
       preRunnerScript: core.getInput('pre-runner-script'),
+      autoShutdownSeconds: core.getInput('auto-shutdown-seconds'),
     };
 
     const tags = JSON.parse(core.getInput('aws-resource-tags'));
@@ -41,16 +43,18 @@ class Config {
       throw new Error(`The 'mode' input is not specified`);
     }
 
-    if (!this.input.githubToken) {
-      throw new Error(`The 'github-token' input is not specified`);
-    }
-
     if (this.input.mode === 'start') {
+      if (!this.input.githubToken && !this.input.githubRegistrationToken) {
+        throw new Error(`The 'github-token' xor 'github-registration-token' inputs must be specified`);
+      }
       if (!this.input.ec2ImageId || !this.input.ec2InstanceType || !this.input.ec2Os || !this.input.subnetId || !this.input.securityGroupId) {
         throw new Error(`Not all the required inputs are provided for the 'start' mode`);
       }
       if (this.input.ec2Os !== 'windows' && this.input.ec2Os !== 'linux') {
         throw new Error(`Wrong ec2-os. Allowed values: windows or linux.`);
+      }
+      if (!Number.isInteger(parseInt(this.input.autoShutdownSeconds)) ) {
+        throw new Error(`Wrong auto-shutdown-seconds. Allowed values: integer.`);
       }
     } else if (this.input.mode === 'stop') {
       if (!this.input.label || !this.input.ec2InstanceId) {
