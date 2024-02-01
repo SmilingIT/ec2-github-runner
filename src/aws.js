@@ -86,6 +86,7 @@ async function startEc2Instance(label, githubRegistrationToken) {
     SecurityGroupIds: [config.input.securityGroupId],
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
+    InstanceInitiatedShutdownBehavior: 'terminate',   // force EC2 instance to terminate when shutdown
   };
 
   const command = new RunInstancesCommand(params);
